@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="userApp">
+<head>
+    <meta charset="UTF-8" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="HomeController as homeCtrl">
+
+<div class="container">
+    <h1>Home Page</h1>
+
+    <div class="buttons">
+        <button ng-click="homeCtrl.goTo('register.html')">Register New User</button>
+        <button ng-click="homeCtrl.goTo('user_list.html')">View Registered Users</button>
+    </div>
+</div>
+
+<script>
+    angular.module('userApp', [])
+      .controller('HomeController', ['$window', function($window) {
+        this.goTo = function(url) {
+          $window.location.href = url;
+        };
+      }]);
+</script>
+</body>
+</html>

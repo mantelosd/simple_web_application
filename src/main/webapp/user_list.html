@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html ng-app="userApp">
+<head>
+    <link rel="stylesheet" href="user_list.css">
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+</head>
+<body ng-controller="UserListController">
+
+<h2>Registered Users</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Surname</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="user in users"
+        ng-click="showUserDetails(user.id)"
+        style="cursor: pointer;"
+        ng-class="{'hover-row': true}">
+        <td>{{ user.name }}</td>
+        <td>{{ user.surname }}</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="modal" ng-show="modalVisible" ng-click="closeModal()"></div>
+
+<!-- Modal content -->
+<div class="modal-content" ng-show="modalVisible">
+    <h3>User Details</h3>
+    <p><strong>Name:</strong> {{ selectedUser.name }}</p>
+    <p><strong>Surname:</strong> {{ selectedUser.surname }}</p>
+    <p><strong>Gender:</strong> {{ selectedUser.gender }}</p>
+    <p><strong>Birthdate:</strong> {{ selectedUser.birthdate }}</p>
+    <p><strong>Work Address:</strong> {{ selectedUser.workAddress }}</p>
+    <p><strong>Home Address:</strong> {{ selectedUser.homeAddress }}</p>
+    <button ng-click="closeModal()">Close</button>
+</div>
+
+<script>
+    angular.module('userApp', [])
+    .controller('UserListController', function($scope, $http) {
+        $scope.users = [];
+        $scope.selectedUser = {};
+
+        $http.get('http://localhost:8080/api/users/names')
+            .then(function(response) {
+                $scope.users = response.data;
+            }, function(error) {
+                alert("Failed to fetch user list.");
+                console.error(error);
+            });
+
+        $scope.showUserDetails = function(userId) {
+            $http.get('http://localhost:8080/api/users/' + userId)
+                .then(function(response) {
+                    $scope.selectedUser = response.data;
+                    $scope.modalVisible = true;  // show modal
+                }, function(error) {
+                    alert("Failed to load user details.");
+                    console.error(error);
+                });
+        };
+
+        $scope.closeModal = function() {
+            $scope.modalVisible = false;
+        };
+    });
+</script>
+
+</body>
+</html>

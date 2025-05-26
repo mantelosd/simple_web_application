@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html ng-app="userApp">
+<head>
+    <link rel="stylesheet" href="register.css">
+    <meta charset="UTF-8">
+    <title>Register New User</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+</head>
+<body ng-controller="RegisterController">
+
+<h2>Register New User</h2>
+
+<!--<button onclick="window.location.href='user_list.html'" style="margin-bottom: 20px;">-->
+<!--    View Registered Users-->
+<!--</button>-->
+
+<form name="registerForm" ng-submit="submitForm()" novalidate>
+
+    <label>Name *</label>
+    <input type="text" name="name" ng-model="user.name" required>
+    <div class="error" ng-show="registerForm.name.$touched && registerForm.name.$invalid">Name is required.</div>
+
+    <label>Surname *</label>
+    <input type="text" name="surname" ng-model="user.surname" required>
+    <div class="error" ng-show="registerForm.surname.$touched && registerForm.surname.$invalid">Surname is required.</div>
+
+    <label>Gender *</label>
+    <select name="gender" ng-model="user.gender" required>
+        <option value="">-- Select Gender --</option>
+        <option value="M">M</option>
+        <option value="F">F</option>
+    </select>
+    <div class="error" ng-show="registerForm.gender.$touched && registerForm.gender.$invalid">Gender is required.</div>
+
+    <label>Birthdate *</label>
+    <input type="text" id="birthdate" name="birthdate" ng-model="user.birthdate" required readonly>
+    <div class="error" ng-show="registerForm.birthdate.$touched && registerForm.birthdate.$invalid">Birthdate is required.</div>
+
+    <label>Work Address</label>
+    <textarea ng-model="user.address.workAddress"></textarea>
+
+    <label>Home Address</label>
+    <textarea ng-model="user.address.homeAddress"></textarea>
+
+    <button type="submit" ng-disabled="registerForm.$invalid">Register</button>
+
+</form>
+
+<script>
+    angular.module('userApp', [])
+      .controller('RegisterController', function($scope, $http) {
+        $scope.user = {};
+
+        $scope.submitForm = function () {
+            if ($scope.registerForm.$valid) {
+                $http.post('http://localhost:8080/api/users/register', $scope.user)
+                 .then(function (response) {
+                    alert("User registered successfully!");
+                    $scope.user = {};
+                    $scope.registerForm.$setPristine();
+                }, function (error) {
+                    const msg = error?.data?.message || "Failed to register user.";
+                    alert("Error: " + msg);
+                    console.error("Full error:", error);
+                });
+            }
+        };
+
+        // Initialize jQuery UI datepicker
+        angular.element(document).ready(function () {
+          $('#birthdate').datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1900:2025',
+            onSelect: function(dateText) {
+              $scope.user.birthdate = dateText;
+              $scope.$apply();
+            }
+          });
+        });
+      });
+
+</script>
+
+</body>
+</html>
