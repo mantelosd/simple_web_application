@@ -25,6 +25,11 @@
         ng-class="{'hover-row': true}">
         <td>{{ user.name }}</td>
         <td>{{ user.surname }}</td>
+        <td>
+            <button ng-click="deleteUser(user.id); $event.stopPropagation();">
+                Delete
+            </button>
+        </td>
     </tr>
     </tbody>
 </table>
@@ -70,6 +75,19 @@
 
         $scope.closeModal = function() {
             $scope.modalVisible = false;
+        };
+
+        $scope.deleteUser = function(userId) {
+          if (confirm("Are you sure you want to delete this user?")) {
+            $http.delete('http://localhost:8080/api/users/delete/' + userId)
+              .then(function(response) {
+                // Remove the user from the list without reloading
+                $scope.users = $scope.users.filter(user => user.id !== userId);
+              }, function(error) {
+                alert("Failed to delete user.");
+                console.error(error);
+              });
+          }
         };
     });
 </script>

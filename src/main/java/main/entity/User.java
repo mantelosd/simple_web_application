@@ -16,7 +16,7 @@ public class User {
     private String gender;
     private LocalDate birthdate;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private UserAddress address;
 
