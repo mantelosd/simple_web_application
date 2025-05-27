@@ -63,7 +63,7 @@
                     $scope.user = {};
                     $scope.registerForm.$setPristine();
                 }, function (error) {
-                    const msg = error?.data?.message || "Failed to register user.";
+                    const msg = error?.data || "Failed to register user.";
                     alert("Error: " + msg);
                     console.error("Full error:", error);
                 });

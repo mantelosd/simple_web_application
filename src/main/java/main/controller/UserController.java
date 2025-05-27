@@ -4,10 +4,12 @@ import main.dto.UserDetailsDto;
 import main.dto.UserNameDto;
 import main.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import main.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,18 +18,11 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class UserController {
 
-
-    private final UserRepository repository;
-
     private UserRepository userRepository;
-
-    public UserController(UserRepository repository) {
-        this.repository = repository;
-    }
 
     @GetMapping("/names")
     public List<UserNameDto> getAllNamesAndSurnames() {
-        return repository.findAllNamesAndSurnames();
+        return userRepository.findAllNamesAndSurnames();
     }
 
     @Autowired
@@ -54,11 +49,11 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
 
-//        if (userRepository.existsByEmail(user.getEmail())) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body("Email already exists");
-//        }
+        if (userRepository.findByNameAndSurname(user.getName(),user.getSurname()).isPresent()) {
+            return ResponseEntity
+                    .badRequest().contentType(MediaType.TEXT_PLAIN)
+                    .body("User already exists");
+        }
 
         // Password should be hashed here in real applications
         userRepository.save(user);
